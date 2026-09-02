@@ -98,6 +98,31 @@ npm run dev
 
 ---
 
+## Quick Deploy to Vercel
+
+**Frontend** → Vercel (Next.js)
+**Backend** → Railway / Render / VPS (Laravel)
+
+### 1. Deploy Backend First
+```bash
+# On Railway/Render: set these env vars
+APP_ENV=production
+APP_KEY=base64:...
+DB_CONNECTION=pgsql
+FRONTEND_URL=https://kalmklothing.vercel.app
+```
+
+### 2. Deploy Frontend on Vercel
+1. Go to https://vercel.com/new
+2. Import GitHub repo `ndserialceo/kalmklothing`
+3. Set **Root Directory** to `frontend`
+4. Add env var: `NEXT_PUBLIC_API_URL` = `https://your-backend.com/api`
+5. Deploy
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for full guide.
+
+---
+
 ## Default Credentials
 
 | Role | Email | Password |
@@ -212,7 +237,9 @@ FLUTTERWAVE_ENCRYPTION_KEY=FLWSECK_TESTxxx
 
 ## Production Deployment
 
-### Backend (Laravel)
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed Vercel + backend deployment guide.
+
+### Backend (Laravel) — Deploy to Railway, Render, or VPS
 
 1. **Server Requirements**: PHP 8.5+, PostgreSQL, Nginx/Apache
 2. **Environment**:
@@ -220,6 +247,7 @@ FLUTTERWAVE_ENCRYPTION_KEY=FLWSECK_TESTxxx
    - Set `APP_DEBUG=false`
    - Configure PostgreSQL in `DB_*` settings
    - Set real payment keys
+   - Set `FRONTEND_URL=https://kalmklothing.vercel.app`
    - Configure mail driver (SMTP/SES)
 
 3. **Database**:
@@ -235,20 +263,29 @@ FLUTTERWAVE_ENCRYPTION_KEY=FLWSECK_TESTxxx
    php artisan view:cache
    ```
 
-### Frontend (Next.js)
+### Frontend (Next.js) — Deploy to Vercel
 
-1. **Build**:
-   ```bash
-   npm run build
-   ```
+```bash
+# Option 1: Vercel CLI
+npm i -g vercel
+vercel login
+cd frontend
+vercel --prod
 
-2. **Deploy** to Vercel, Netlify, or any Node.js host
-3. Set environment variables on hosting platform
+# Option 2: Vercel Dashboard
+# Import GitHub repo → Set root directory to "frontend" → Add env vars → Deploy
+```
+
+Set these environment variables on Vercel:
+- `NEXT_PUBLIC_API_URL` = `https://your-backend.com/api`
+- `NEXT_PUBLIC_APP_URL` = `https://kalmklothing.vercel.app`
+- `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY` = your key
+- `NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY` = your key
 
 ### Domain & SSL
-- Configure domain to point to frontend
-- Frontend proxies API calls to backend
-- SSL certificate (Let's Encrypt or hosting provider)
+- Vercel provides free SSL automatically
+- Add custom domain in Vercel dashboard → Settings → Domains
+- Configure DNS: CNAME `www` → `cname.vercel-dns.com`
 
 ---
 
